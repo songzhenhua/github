@@ -1,0 +1,74 @@
+学习地址
+http://www.w3school.com.cn/html/index.asp
+
+
+
+HTML 指的是超文本标记语言 (Hyper Text Markup Language)，是一种标记语言 (markup language)
+
+HTML 标签是由尖括号包围的关键词，通常是成对出现，标签对中的第一个标签是开始标签(开放标签)，第二个标签是结束标签(闭合标签)
+
+空元素在开始标签中进行关闭，如<br />
+
+属性值应该始终被包括在引号内。双引号是最常用的，不过使用单引号也没有问题。在某些个别的情况下，比如属性值本身就含有双引号，那么您必须使用单引号；反之亦然。
+
+HTML推荐使用小写
+
+默认情况下，HTML 会自动地在块级元素前后添加一个额外的空行，比如段落、标题元素前后。
+
+使用空的段落标记 <p></p> 去插入一个空行是个坏习惯。用 <br /> 标签代替它！
+
+请确保将 HTML heading 标签只用于标题。不要仅仅是为了产生粗体或大号的文本而使用标题。
+
+<hr /> 标签在 HTML 页面中创建水平线。
+
+注释，如 <!-- This is a comment -->
+
+您无法通过在 HTML代码中添加额外的空格或换行来改变输出的效果。当显示页面时，浏览器会移除源代码中多余的空格和空行。所有连续的空格或空行都会被算作一个空格。
+
+style属性：background-color 背景颜色，font-family 字体，color 颜色，font-size 字体尺寸，text-align 元素中文本的水平对齐方式
+
+<del>删除	<ins>下划线	<i>斜体		<b>加粗
+
+CSS:层叠样式表(英文全称：Cascading Style Sheets)
+
+三种方式来插入样式表(CSS):外部样式表、内部样式表、内联样式
+
+<table>表格	<tr>行	<td>单元格	<th>表头
+
+<ul>无序列表	<ol>有序列表		<li>列表项
+
+<dl>自定义列表	<dt>自定义列表项	<dd>自定义列表项的定义
+
+<div>元素是块级元素，它是可用于组合其他HTML元素的容器。
+<span>元素是内联元素，可用作文本的容器。
+
+<frameset>框架结构标签；<frame>标签定义了放置在每个框架中的HTML文档；<iframe>内联框架
+
+<title>定义文档的标题			<link>定义文档与外部资源之间的关系
+<meta>提供关于HTML文档的元数据		<style>用于为HTML文档定义样式信息
+<base>为页面上的所有链接规定默认地址或默认目标（target）
+
+字符实体（character entities）
+显示	描述	实体名	实体编号
+ 	空格	&nbsp;	&#160;
+<	小于号	&lt;	&#60;
+>	大于号	&gt;	&#62;
+&	和号	&amp;	&#38;
+"	引号	&quot;	&#34;
+'	撇号 	&apos; (IE不支持)&#39;
+×	乘号	&times;	&#215;
+÷	除号	&divide;&#247;
+
+URL编码使用"%"其后跟随两位的十六进制数来替换非ASCII字符。URL不能包含空格。URL编码通常使用 + 来替换空格。
+http://www.w3school.com.cn/tags/html_ref_urlencode.html
+
+<form action="action_page.php" method="GET"> action属性定义在提交表单时执行的动作
+<fieldset>将表单中元素框起来	<legend>元素为<fieldset>元素定义标题
+<input type="text" name="name"> text文本输入；password密码输入；radio单选按钮；checkbox复选框；submit提交按钮；button按钮；
+
+<select>下拉列表；<option>列表选项，默认选择首个，可用selected属性来定义预选项
+<textarea> 多行文本	<button>按钮	
+
+HTML Input 属性:value默认值；readonly只读；disabled禁用(不会提交)；size字段尺寸；maxlength最大长度；
+
+<object>定义内嵌对象(音视频)；	H5：<embed>定义内嵌对象(音视频) <audio>音频 <video>视频
