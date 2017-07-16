@@ -1,0 +1,181 @@
+蒋鑫
+
+设置不提示CRLF：git config core.autocrlf false
+P58
+查看版本：git --version
+设置用户名和邮件:
+git config --global user.name "Song Zhenhua"
+git config --global user.email 123@qq.com
+设置git别名：略
+P59
+在git命令输出中开启颜色:git config --global color.ui true
+创建版本库:
+mkdir demo
+cd demo
+git init
+查看隐藏目录：ls -aF
+创建带内容的TXT：echo "Hello">welcome.txt
+添加到版本库：git add welcome.txt
+P60
+提交：git commit -m "description" //-m为提交说明
+提交后输出的说明
+P62
+显示版本库.git目录所在位置：git rev-parse --git-dir
+显示工作区根目录：git rev-parse --show-toplevel
+当前目录相对于工作区根目录的相对目录：git rev-parse --show-prefix
+显示当前目录后退到工作区的根的深度：git rev-parse --show-cdup
+P63
+打开版本库配置文件：$cd /e/demo		$git config -e
+打开全局配置文件：git config -e --global
+打开系统配置文件：git config -e --system
+优先级别：版本库配置>全局配置>系统配置
+P64
+读取INI配置文件中的某个配置的键值：git config <section>.<key>
+更改INI配置文件中的某个配置的键值：git config <section>.<key> <value>
+P66
+查看提交日志：git log --pretty=fuller	//pretty=oneline精简日志
+git commit --amend --allow-empty --reset-author
+修补提交：--amend
+允许空白提交：--allow-empty
+同步修改Author ID:--reset-author
+P70
+在TXT文档追加内容：echo "Nice to meet you" >> welcome.txt
+工作区与stage差异：git diff
+P72
+工作区与当前版本库头指针差异：git diff HEAD
+P71-73
+精简状态输出：git status -s
+返回信息位于第一列的字符M含义：版本库中的文件与stage中的文件相比有改动；位于第二列的字符M含义：工作区当前的文件与stage中的文件相比有改动
+P75
+stage与版本库差异：git diff --cached
+P76
+查看文件详细时间：ls --full-time .git/index
+P77
+当执行git status或git diff命令扫描工作区改动的时候，先依据.git/index文件中记录的（用于跟踪工作区文件的）时间戳、长度等信息判断工作区文件是否改变，如果工作区文件时间戳改变，说明文件的内容可能被改变，需要打开文件，读取文件内容，与更改前的原始文件比较，判断文件内容是否被更改。如果文件内容没有改变，则将该文件新的时间戳记录到.git/index文件中。
+工作区-暂存区(stage)-版本库原理图
+P78
+查看HEAD指向的目录树：git ls-tree -l HEAD
+命令显示的5个字段位次是：文件的属性，Git对象库中的一个blob对象，在对象库中的ID，文件大小，文件名
+P79
+查看暂存区目录树：git ls-files -s
+共5个字段，第3个是暂存区编号，其他同上
+P81
+git commit -a
+对本地所有变更的文件执行提交操作，包括对本地修改的文件和删除的文件，但不包括未被版本库跟踪的文件
+P87
+显示SHA1指代的数据类型：git cat-file -t e695606
+显示SHA1指代的内容：git cat-file -p e695606
+.git/HEAD指向.git/refs/heads/master,后者指向最新提交的ID
+P88
+目录.git/refs是保存引用的命名空间，其中.git/refs/heads目录下的引用又称为分支。对于分支，即可以使用正规的长格式表示法，如refs/heads/master,也可以用master表示。Git有一个底层命令git rev-parse可以用于显示引用对应的提交ID
+P91
+使用HEAD代表版本库中最近的一次提交
+符号^可以用于指代父提交，HEAD^^则代表HEAD^的父提交
+对于一个提交有多个提交，可以在符号^后面用数字表示是第几个提交
+符号~<n>也可以用于指代祖先提交
+提交所对应的树对象：a573106^{tree}
+P93
+日志-图标：git log --graph --oneline
+P94
+将master重置到上一个老的提交：git reset --hard HEAD^
+将master重置到任意一个提交：git reset --hard SHA1
+P95
+查看操作日志命令：git reflog show master | head -5
+git reflog的输出和直接查看.git/logs/refs/heads/master不同在于显示顺序不同，即最新改变放在最前面，且只显示每次改变的最终SHA1
+P96
+重置master为再次改变之前的值：git reset --hard master@{2}
+用法一git reset [-q] [<commit>] [--] <paths>
+不重置引用和工作区，用指定提交状态（commit）下的文件（path）替换暂存区中的文件
+用法二git reset[--soft|--mixed|--hard|--merge|--keep][-q][<commit>]
+会重置引用
+--hard替换引用的指向、暂存区、工作区
+--soft替换引用的指向
+--mixed（默认）替换引用的指向、暂存区
+P102
+合并操作：git merge SHA1
+P103
+git checkout用法详解
+P108
+测试运行clean:git clean -nd
+删除本地多余的目录和文件:git clean -fd
+P108
+git stash详解
+P111
+WIP(work in progess) on master代表工作区进度
+index one master代表暂存区进度
+P115
+删除工作区文件rm filesname
+删除暂存区文件git rm filesname
+P117
+查看历史版本的文件列表：git ls-files --with-tree=HEAD^
+查看历史版本中删除文件内容：git cat-file -p HEAD^:welcome.txt
+快速标记删除：git add -u 将修改和删除的文件标记到暂存区
+P118
+恢复历史中的文件：git checkout HEAD^ -- welcome.txt
+将工作区所有改动、新增文件添加到暂存区：git add -A
+P119
+移动文件(=git rm+git add):git mv welcome.txt readme
+P123
+选择性添加：git add -i
+P125
+创建里程碑：git tag -m "describe" tagname
+P126
+创建文件忽略：cat > .gitignore <<EOF  之后依次输入文件名，可使用通配符，最后一行输入EOF。.gitignore作用范围是其所处的目录及子目录。忽略只对未跟踪文件有效
+git add -f filename可以将.gitignore里的文件强制添加
+P128
+.gitignore的忽略用法
+P130
+版本库浏览工具：gitk -all
+图形管理：git gui
+P140
+从github下载：git clone git://github.com/ossxp-com/gitdemo.git
+P141
+显示分支：git rev-parse --symbolic --branches
+显示里程碑：git rev-parse --symbolic --tags
+P147
+浏览日志git log详解
+P150
+git diff详解
+P151
+文件追溯git blame详解
+P152
+二分查找git bisect详解
+P157
+修补式提交git commit --amend
+P177
+反转提交（提交的反向提交）git revert
+P180
+将版本库克隆到目录：git clone <repository> <directory>
+克隆裸版本库（不带工作区）：git clone --bare <repository> <directory.git>
+P205
+所谓快进式推送，就是要推送的本地版本库的提交是建立在远程版本库相应分支的现有提交基础上的，即远程版本库相应分支的最新提交是本地版本库最新提交的祖先提交。
+P211
+合并操作：git merge <commit>
+合并操作将<commit>对应的目录树和当前工作分支的目录树的内容进行合并，合并后的提交以当前分支的提交作为第一个父提交，以<commit>为第二个父提交。合并操作还支持将多个<commit>代表的分支和当前分支进行合并
+P234
+显示里程碑：git tag
+P236
+创建里程碑(轻量级里程碑)：git tag <tagname> [<commit>]
+commit为空则基于头指针HEAD创建里程碑
+P238
+创建带说明的里程碑：git tag -m <msg> <tagname>
+记录创建里程碑的用户、创建时间、说明
+P242
+删除里程碑：git tag -d <tagname> 
+P247
+查看远程版本库：git ls-remote origin
+P258
+查看分支：git branch
+创建分支：git branch <branchname> <start-point>
+缺少<start-point>默认从HEAD指向的提交创建分支
+删除分支：git branch -d <branchname> 或 git branch -D <branchname>
+重命名分支：git branch -m <branchname> 或 git branch -M <branchname>
+P290
+注册远程版本库:git remote add new-remote file:///path/to/repos/hello.git
+显示已经注册的远程版本库:git remote -v
+P292
+修改远程版本库名称：git remote rename oldname newname
+删除远程版本库：git remote rm name
+P296
+创建补丁：git format-patch -s HEAD~3..HEAD
+-s参数为在补丁文件中添加当前用户的签名
