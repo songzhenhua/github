@@ -1,0 +1,333 @@
+学习地址：http://www.w3school.com.cn/js/index.asp
+
+1★HTML 中的脚本必须位于 <script> 与 </script> 标签之间。
+脚本可被放置在 HTML 页面的 <body> 和 <head> 部分中。
+
+如需使用外部文件，请在 <script> 标签的 "src" 属性中设置该 .js 文件：
+<script src="myScript.js"></script>
+
+如需从 JavaScript 访问某个 HTML 元素，您可以使用 document.getElementById(id) 方法。
+
+在 JavaScript 中，用分号来结束语句是可选的。
+
+JavaScript 对大小写是敏感的。
+
+JavaScript 会忽略多余的空格。
+
+您可以在文本字符串中使用反斜杠对代码行进行换行。
+
+
+2★写到文档输出
+<script>
+document.write("<p>我的第一段 JavaScript</p>");
+</script>
+
+您只能在 HTML 输出中使用 document.write。如果您在文档加载后使用该方法，会覆盖整个文档。
+
+
+3★JavaScript 注释
+单行注释以 // 开头。多行注释以 /* 开始，以 */ 结尾。
+
+
+4★JavaScript 变量
+变量必须以字母开头
+变量也能以 $ 和 _ 符号开头（不过我们不推荐这么做）
+变量名称对大小写敏感（y 和 Y 是不同的变量）
+使用 var 关键词来声明变量：var name="Gates", age=56, job="CEO";
+
+
+5★JavaScript 数据类型
+字符串、数字、布尔、数组、对象、Null、Undefined。
+
+当您声明新变量时，可以使用关键词 "new" 来声明其类型：
+var carname=new String;
+var x=      new Number;
+var y=      new Boolean;
+var cars=   new Array;
+var person= new Object;
+
+JavaScript 变量均为对象。当您声明一个变量时，就创建了一个新的对象。
+
+JavaScript 拥有动态类型。这意味着相同的变量可用作不同的类型。
+
+
+6★下面的代码创建名为 cars 的数组：
+var cars=new Array();
+cars[0]="Audi";
+
+或者 (condensed array):
+var cars=new Array("Audi","BMW","Volvo");
+
+或者 (literal array):
+var cars=["Audi","BMW","Volvo"];
+
+
+7★对象由花括号分隔。在括号内部，对象的属性以名称和值对的形式 (name : value) 来定义。属性由逗号分隔：
+var person={firstname:"Bill", lastname:"Gates", id:5566};
+
+对象属性有两种寻址方式：
+name=person.lastname;
+name=person["lastname"];
+
+
+8★Undefined 这个值表示变量不含有值。
+可以通过将变量的值设置为 null 来清空变量。
+
+
+9★在 JavaScript 中，对象是数据（变量），拥有属性和方法。
+
+
+10★函数就是包裹在花括号中的代码块，前面使用了关键词 function：
+function functionname()
+{
+这里是要执行的代码
+}
+
+
+11★在 JavaScript 函数内部声明的变量（使用 var）是局部变量，所以只能在函数内部访问它。（该变量的作用域是局部的）。
+
+在函数外声明的变量是全局变量，网页上的所有脚本和函数都能访问它。
+
+JavaScript 变量的生命期从它们被声明的时间开始。局部变量会在函数运行以后被删除。全局变量会在页面关闭后被删除。
+
+如果您把值赋给尚未声明的变量，该变量将被自动作为全局变量声明。
+
+
+12★如果把数字与字符串相加，结果将成为字符串。
+
+
+13★比较运算符
+==	等于
+===	全等（值和类型）
+
+
+14★逻辑运算符
+&&	and
+||	or
+!	not
+
+
+15★条件运算符
+语法:variablename=(condition)?value1:value2 
+例子:greeting=(visitor=="PRES")?"Dear President ":"Dear ";
+如果变量 visitor 中的值是 "PRES"，则向变量 greeting 赋值 "Dear President "，否则赋值 "Dear"。
+
+
+16★JavaScript 标签
+正如您在 switch 语句那一章中看到的，可以对 JavaScript 语句进行标记。如需标记 JavaScript 语句，请在语句之前加上冒号
+
+label:
+语句
+
+通过标签引用，break 语句可用于跳出任何 JavaScript 代码块：
+cars=["BMW","Volvo","Saab","Ford"];
+list:
+{
+document.write(cars[0] + "<br>");
+document.write(cars[1] + "<br>");
+document.write(cars[2] + "<br>");
+break list;
+document.write(cars[3] + "<br>");
+}
+
+
+17★当网页被加载时，浏览器会创建页面的文档对象模型，DOM（Document Object Model）。
+
+
+18★查找 HTML 元素
+通过 id 查找 HTML 元素:
+var x=document.getElementById("intro");
+
+通过标签名查找 HTML 元素:
+var x=document.getElementById("main");
+var y=x.getElementsByTagName("p");
+
+通过类名找到 HTML 元素（在 IE 5,6,7,8 中无效）
+
+
+19★修改 HTML 内容的最简单的方法时使用 innerHTML 属性
+document.getElementById(id).innerHTML=new HTML
+
+
+20★改变 HTML 样式
+document.getElementById("p2").style.color="blue";
+
+<button type="button" onclick="document.getElementById('id1').style.color='red'">
+点击这里
+</button>
+
+<input type="button" value="隐藏文本" onclick="document.getElementById('p1').style.visibility='hidden'" />
+
+
+21★JavaScript HTML DOM 事件
+在本例中，当用户在 <h1> 元素上点击时，会改变其内容：
+<h1 onclick="this.innerHTML='谢谢!'">请点击该文本</h1>
+
+<head>
+<script>
+function changetext(id)
+{
+id.innerHTML="谢谢!";
+}
+</script>
+</head>
+<body>
+<h1 onclick="changetext(this)">请点击该文本</h1>
+</body>
+
+
+22★使用 HTML DOM 来分配事件
+名为 displayDate 的函数被分配给 id=myButn" 的 HTML 元素。当按钮被点击时，会执行该函数。
+document.getElementById("myBtn").onclick=function(){displayDate()};
+
+
+23★JavaScript HTML DOM 事件
+onchange 事件常结合对输入字段的验证来使用。
+<input type="text" id="fname" onchange="upperCase()">
+
+onload 事件可用于检测访问者的浏览器类型和浏览器版本，并基于这些信息来加载网页的正确版本
+onload 和 onunload 事件可用于处理 cookie。
+
+onmouseover 和 onmouseout 事件可用于在用户的鼠标移至 HTML 元素上方或移出元素时触发函数。
+<h1 onmouseover="style.color='red'" onmouseout="style.color='blue'">
+
+onmousedown, onmouseup 以及 onclick 构成了鼠标点击事件的所有部分。
+
+onfocus当输入字段获得焦点时，改变其背景色。
+
+
+24★添加和删除节点（HTML 元素）
+<div id="div1">
+<p id="p1">这是一个段落</p>
+<p id="p2">这是另一个段落</p>
+</div>
+
+创建HTML元素:
+<script>
+var para=document.createElement("p");
+var node=document.createTextNode("这是新段落。");
+para.appendChild(node);
+
+var element=document.getElementById("div1");
+element.appendChild(para);
+</script>
+
+删除 HTML 元素，方法一：
+<script>
+var parent=document.getElementById("div1");
+var child=document.getElementById("p1");
+parent.removeChild(child);
+</script>
+
+删除方法二：
+var child=document.getElementById("p1");
+child.parentNode.removeChild(child);
+
+
+25★创建、删除、遍历对象
+创建直接的实例
+方法一：
+person=new Object();
+person.firstname="Bill";
+person.lastname="Gates";
+person.age=56;
+person.eyecolor="blue";
+
+方法二：
+person={firstname:"John",lastname:"Doe",age:50,eyecolor:"blue"};
+
+使用函数来构造对象
+function person(firstname,lastname,age,eyecolor)
+{
+this.firstname=firstname;
+this.lastname=lastname;
+this.age=age;
+this.eyecolor=eyecolor;
+this.changeName=changeName;
+function changeName(name)
+{
+this.lastname=name;
+}
+}
+
+var myFather=new person("Bill","Gates",56,"blue");
+
+for (x in myFather)
+  {
+  txt=txt + myFather[x];
+  }
+
+
+26★JavaScript 数字
+如果前缀为 0，则 JavaScript 会把数值常量解释为八进制数，如果前缀为 0 和 "x"，则解释为十六进制数。
+
+
+27★浏览器对象模型 (BOM)Browser Object Model
+所有浏览器都支持 window 对象。它表示浏览器窗口。
+所有 JavaScript 全局对象、函数以及变量均自动成为 window 对象的成员。
+全局变量是 window 对象的属性。
+全局函数是 window 对象的方法。
+
+甚至 HTML DOM 的 document 也是 window 对象的属性之一：
+window.document.getElementById("header");
+与此相同：
+document.getElementById("header");
+
+浏览器窗口的尺寸（浏览器的视口，不包括工具栏和滚动条）。
+window.innerHeight - 浏览器窗口的内部高度
+window.innerWidth - 浏览器窗口的内部宽度
+
+其他 Window 方法：
+window.open() - 打开新窗口
+window.close() - 关闭当前窗口
+window.moveTo() - 移动当前窗口
+window.resizeTo() - 调整当前窗口的尺寸
+
+
+28★window.screen 对象包含有关用户屏幕的信息
+window.screen 对象在编写时可以不使用 window 这个前缀：
+screen.availWidth - 属性返回访问者屏幕的宽度，以像素计，减去界面特性，比如窗口任务栏
+screen.availHeight - 属性返回访问者屏幕的高度，以像素计，减去界面特性，比如窗口任务栏
+
+
+29★Window Location
+window.location 对象用于获得当前页面的地址 (URL)，并把浏览器重定向到新的页面。对象在编写时可不使用 window 这个前缀。
+location.hostname 返回 web 主机的域名
+location.pathname 返回当前页面的路径和文件名
+location.port 返回 web 主机的端口 （80 或 443）
+location.protocol 返回所使用的 web 协议（http:// 或 https://）
+location.href 属性返回当前页面的 URL
+location.assign() 方法加载新的文档。
+
+
+30★Window History
+window.history 对象包含浏览器的历史，在编写时可不使用 window 这个前缀。
+history.back() - 与在浏览器点击后退按钮相同
+history.forward() - 与在浏览器中点击按钮向前相同
+
+
+31★Window Navigator
+window.navigator 对象包含有关访问者浏览器的信息，在编写时可不使用 window 这个前缀。
+
+
+32★JavaScript 消息框
+警告框：alert("文本")
+警告框经常用于确保用户可以得到某些信息。
+当警告框出现后，用户需要点击确定按钮才能继续进行操作。
+
+确认框：confirm("文本")
+确认框用于使用户可以验证或者接受某些信息。
+当确认框出现后，用户需要点击确定或者取消按钮才能继续进行操作。
+如果用户点击确认，那么返回值为 true。如果用户点击取消，那么返回值为 false。
+
+提示框：prompt("文本","默认值")
+提示框经常用于提示用户在进入页面前输入某个值。
+当提示框出现后，用户需要输入某个值，然后点击确认或取消按钮才能继续操纵。
+如果用户点击确认，那么返回值为输入的值。如果用户点击取消，那么返回值为 null。
+
+
+33★JavaScript 计时事件
+var t=setTimeout("javascript语句",毫秒)
+从当前起多少毫秒后执行第一个参数的javascript语句
+
+clearTimeout(setTimeout_variable)	取消计时
