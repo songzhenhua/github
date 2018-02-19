@@ -1,0 +1,243 @@
+MongoDB大数据处理权威指南（第3版） 第7章 Python和Mongodb 读书笔记
+
+样例字典：
+item = {
+  "Type" : "Laptop",
+  "ItemNumber" : "1234EXD",
+  "Status" : "In use",
+  "Location" : {
+    "Department" : "Development",
+    "Building" : "2B",
+    "Floor" : 12,
+    "Desk" : 120103,
+    "Owner" : "Walker, Jan"
+  },
+  "Tags" : ["Laptop","Development","In use"]
+}
+
+一、连接
+from pymongo import MongoClient
+
+#IP：127.0.0.1，端口：27017
+Connection = MongoClient("127.0.0.1", 27017)
+
+#库名inventory
+db = Connection.inventory
+
+#集合名items
+collection = db.items
+
+
+二、插入数据
+#插入一个文档，item是一个字典{}
+collection.insert_one(item)
+
+#插入多个文档，two是一个列表[{},{}]
+collection.insert_many(two)
+
+
+三、搜索数据
+#搜索单个文档
+collection.find_one()
+
+#搜索ItemNumber=3456TFS，且不返回_id
+collection.find_one({"ItemNumber" : "3456TFS"}, fields={'_id' : False})
+
+#搜索多个文档
+for doc in collection.find():
+    doc
+
+#搜索嵌套字典的内容
+for doc in collection.find({"Location.Department" : "Development"}):
+    doc
+
+#搜索数组中的内容
+for doc in collection.find({"Tags" : "Laptop"}):
+    doc
+
+#指定搜索返回键值对
+for doc in collection.find({"Status" : "In use"},Projection={'ItemNumber':True,'Location.Owner':True}):
+    doc
+
+#分页：返回（按ItemNumber排序，略过第1个文档，取之后的2个文档）
+for doc in collection.find({"Status" : "In use"},fields={'ItemNumber':True,'Location.Owner':True}).skip(1).limit(2).sort('ItemNumber'):
+    doc
+
+
+四、聚集查询
+#count()统计数目
+collection.count()
+
+#带条件的count统计
+collection.find({"Location.Department" : "Development", "Status" : "In use"}).count()
+
+#distinct()统计唯一数据的数目
+collection.distinct("ItemNumber")
+
+
+#使用聚集框架对数组分组:将数组Tags中的每个元素做为id，并创建Totals字段，其值为该元素的和
+collection.aggregate([
+    {'$unwind' : '$Tags'},
+    {'$group' : {'_id' : '$Tags', 'Totals' : {'$sum' : 1}}}
+])
+
+#使用聚集框架对数组分组:将数组Tags中的每个元素做为id，并创建Totals字段，其值为该元素的和；结果按Totals降序输出
+from bson.son import SON
+collection.aggregate([
+    {'$unwind' : '$Tags'},
+    {'$group' : {'_id' : '$Tags', 'Totals' : {'$sum' : 1}}},
+    {'$sort' : SON([('Totals', -1)])}
+])
+
+除$sum管道表达式，$group管道操作符还支持：
+#push:		创建并返回一个数组，它包含了分组中搜索到的所有数据
+$addToSet:	在分组中创建并返回一个数组，它包含了分组中搜索到的所有唯一数据
+$first:		返回分组中找到的第一个数据
+$last:		返回分组中找到的最后一个数据
+$max:		返回分组中找到的最大值
+$min:		返回分组中找到的最小值
+$avg:		返回分组中找到的平均值
+
+
+#使用条件操作符重定义查询：$lt小于，$lte小于等于，$gt大于，$gte大于等于
+for doc in collection.find({"Location.Desk" : {"$lt" : 120102}}):
+    doc
+
+#使用$ne搜索不等于的数据
+collection.find({"Status" : {"$ne" : "In use"}}).count()
+
+#使用$in指定匹配的数组
+for doc in collection.find({"Tags" : {"$in" : ["Not used", "Development"]}}):
+    doc
+
+#使用$nin指定不匹配的数组
+for doc in collection.find({"Tags" : {"$nin" : ["Development"]}}):
+    doc
+
+#使用$all搜索匹配数组所有值的文档
+for doc in collection.find({"Tags" : {"$all" : ["Development", "Storage"]}}):
+    doc
+
+#使用$or指定多个匹配表达式
+for doc in collection.find({"$or" : [{"Location.Department" : "Storage"},{"Location.Owner" : "Anderson, Thomas"}]}):
+    doc
+
+#使用$or与其他条件结合使用
+for doc in collection.find({“Location.Building” : "2B", "$or" : [{"Location.Department" : "Storage"},{"Location.Owner" : "Anderson, Thomas"}]}):
+    doc
+
+
+#使用$slice从数组中获取元素
+样例字典
+chair = ({
+  "Status" : "Not used",
+  "Tags" : ["Chair", "Not used", "Storage"],
+  "ItemNumber" : "6789SID",
+  "Location" : {
+  "Department": "Storage",
+  "Building" : "2B"},
+  "PreviousLocation" : [120100,120101,120102,120103,120104,120105,120106,120107,120108,120109,120110]
+})
+
+返回椅子所属的前三张桌子
+collection.find_one({'ItemNumber' : '6789SID'}, {"PreviousLocation" : {'$slice' : 3}})
+
+返回椅子所属的最后三张桌子
+collection.find_one({'ItemNumber' : '6789SID'}, {"PreviousLocation" : {'$slice' : -3}})
+
+忽略椅子所属的前5个位置，返回三张桌子
+collection.find_one({'ItemNumber' : '6789SID'}, {"PreviousLocation" : {'$slice' : [5,3]}})
+
+
+#使用正则表达式搜索
+import re
+
+返回ItemNumber含有4的文档,只显示ItemNumber
+for doc in collection.find({“ItemNumber” : re.compile('4')}, {'ItemNumber' : True}):
+    doc
+
+返回ItemNumber以FS结尾的文档,只显示ItemNumber
+for doc in collection.find({“ItemNumber” : re.compile('.FS$')}, {'ItemNumber' : True}):
+    doc
+
+返回Owner以anderson开头的文档,不区分大小写
+for doc in collection.find({“Location.Owner” : re.compile('^anderson.', re.IGNORECASE)}):
+    doc
+
+
+五、修改数据
+#整个文档更新
+updatedoc ={……} #定义更新数据
+collection.update_one({“ItemNumber” : "6789SID"}, updatedoc) #更新ItemNumber=6789SID
+
+#使用$inc增加整数值,使桌号+20
+collection.update_one({“ItemNumber” : "6789SID"}, {"$inc" : {"Location.desk" : 20}})
+
+#使用$set修改现有值,修改所有符合条件的文档将其building值改为3B
+collection.update_many({“Location.Department” : "Development"}, {"$set" : {"Location.building" : "3B"}})
+
+#使用$unset移除键/值字段
+collection.update_one({“ItemNumber” : "6789SID", "Status" : "Not used"}, {"$unset" : {"Location.building" : 1}})
+
+#使用$push向数组中添加值，如果数组不存在，就使用指定的值创建该数组
+collection.update_many({"Location.Owner" : "Anderson, Thomas"}, {"$push" : {"Tags" : "Anderson"}})
+
+#使用$push和$each向数组中添加多个值
+collection.update_one({"Location.Owner" : re.compile("^Walker,")}, {"$push" : {"Tags" : {'$each' : ['Walker','Warranty']}}})
+
+#使用$addToSet向数组中添加值,与$push区别为，该方法更新前，会检查数组是否已经存在
+collection.update_many({"Type" : "Chair"}, {"$addToSet" : {"Tags" : "Warranty"}})
+
+#使用$addToSet和$each向数组中添加多个值，如果值已存在于数组，不会再次添加
+collection.update_one({"Type" : "Chair", "Location.Owner" : re.compile("^Walker,")}, {"$addToSet" : {"Tags" : {'$each' : ['Walker','Warranty']}}})
+
+#使用$pop从数组中删除元素，-1删除第一个，1删除最后一个
+collection.update_one({"Type" : "Chair"}, {"$pop" : {"Tags" : -1}})
+
+#使用$pull从数组中删除特定的值
+collection.update_one({"Type" : "Chair"}, {"$pull" : {"Tags" : "Double"}})
+
+#使用$pull从数组中删除特定的多个值
+collection.update_one({"Type" : "Chair"}, {"$pullAll" : {"Tags" : ["Double", "one"]}})
+
+#使用replace_one()替代文档，如果未找到匹配的文档，就插入它
+olddoc={...} #定义被替换的文档
+newdoc={...} #定义要替换的文档
+collection.replace_one(olddoc,newdoc,upsert=Ture)
+
+#find_one_and_update()修改单个文档
+query:指定查询使用的过滤器
+update:指定用于更新文档的信息
+upsert:如果设置为真，执行更新插入操作
+sort:以特定的顺序对匹配文档进行排序
+return_document:设置为ReturnDocument.AFTER,就返回更新的文档，而不是选中的文档
+projection:指定返回的字段
+
+collection.find_one_and_update(query={"Type" : "Desk"},update={'$set' : {'Status' : 'repair'}}, return_document=ReturnDocument.AFTER)
+
+#find_one_and_delete()删除单个文档
+collection.find_one_and_delete(query={"Type" : "Desk"},sort={'ItemNumber' : -1})
+
+
+六、批处理数据
+以有序方式批处理数据，若发生了一个错误，操作会停止
+bulk = collection.initialize_ordered_bulk_op() #初始化有序列表
+bulk.insert_one({...}) #把操作装入有序列表bulk
+bulk.insert_one({...})
+bulk.find({...})
+results = bulk.execute() #执行
+pprint(results) #打印执行结果
+
+
+七、删除数据
+#删除单个文档
+delete_one({"Type" : "Desk"})
+
+#删除多个文档
+delete_many({"Type" : "Desk"})
+
+#删除集合
+db.items.drop()
+
+#删除数据库
+Connection.drop_database("inventory")
