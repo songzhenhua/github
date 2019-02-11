@@ -1,0 +1,85 @@
+第一章：内存
+内存的主要组成索引：
+Native Heap：Native代码分配的内存，虚拟机和Android框架本身也会分配
+Dalvik Heap：Java代码分配的对象
+Dalvik Other：类的数据结构和索引
+so mmap：Native代码和常量
+dex mmap：Java代码和常量
+
+内存工具：
+观察Dalvik内存：Android Studio/Memory Monitor
+观察整体内存：dumpsys meminfo
+观察整体内存的详细组成：cat /proc//smaps
+详细分析Dalvik内存：Eclipse Memory Analyzer
+
+Pss表示进程实际使用的物理内存，是由私有内存加上按比例分担计算的各进程共享内存得到的值。
+Dalvik Pss内存 = 私有内存Private Dirty + (共享内存Shared Dirty/共享的进程数)
+Private Dirty存放的是应用新建（new）出来的对象实例，是每个应用所独有的，不会再共享。
+Shared Dirty主要是zygote加载的Android框架部分，会被所有Android应用进程共享
+
+内存分配的最小单位是页面，通常是4KB，这个限制往往会引发各种碎片问题。
+
+经验：
+1.尽量不要在循环中创建很多临时变量
+2.可以将大型的循环拆散、分段或按需执行
+
+第二章：电量
+Android系统上App的电量消耗由cpu、wake lock、数据传输（移动网络&Wifi）、Wifi运行、gps、other sensors组成
+
+详细耗电信息：adb shell dumpsys batterystats|batteryinfo(4.1-4.3用batteryinfo)
+
+Android5.0 Google使用工具Battery Historian 在Web端展示手机状态变化。6.0更新Battery Historian 2.0加入引起手机状态变化的应用
+
+经验：
+1.当应用退到后台，尽量减少应用的主动运行（减少CPU 时间片）
+2.前台运行时，不要注册wake lock，此时注册没有意义，却会被计算到应用电量消耗中
+3.合理设置GPS使用时长和使用频率
+
+第三章：流畅度
+为什么不用FPS，而用SM(Smoothness)
+1.有时FPS很低，却不感觉卡顿。屏幕无绘制需求，画面是静止的，所以FPS为0。
+2.App停止操作，FPS还一直变化。屏幕每一帧的合成都是针对手机所有进程。
+
+Vertical Synchronization（垂直同步），VSync机制理论1秒有60帧，即1帧大约16.6ms。
+
+电影只有24帧，不觉得卡是因为每一帧渲染都是匀速的。
+
+手机开发者选项里打开过度绘制区域查看，无色、蓝色、绿色、浅红、暗红依次指像素点绘制了1次、2次、3次、4次、5次。对于有多层背景颜色的Layout，留最上面一层颜色即可，其他底层的颜色都可以去掉
+
+Tracer for OpenGL ES工具可以记录和分析App每一帧的绘制过程
+
+Hierarchy Viewer 查找UI布局不合理
+1.没有用的父布局，通过标签合并减少UI的层次
+2.使用线性布局LinearLayout排版导致UI层次变深，减少层次或用相对布局RelativeLayout代替LinearLayout
+3.不常用的UI被设置成GONE，用标签代替GONE提高UI性能
+
+使用Lint静态扫描代码，发现问题
+
+使用Traceview和Systrace工具分析代码，两种思路：
+1.找出在主线程耗时较大的函数，通过缓存，或把耗时操作移出主线程，或把滑动过程中出现的耗时操作延时到滑动停止后才开始
+2.分析滑动过程中CPU的工作，让CPU优先执行主线程的工作，尽量不要被其他线程抢占
+
+第五章：流量
+手机抓包：tcpdump抓包；wireshark分析；pcap2har为一个分析pcap的Python库文件
+
+安卓有TCP统计功能，UID=10000+PID
+/proc/uid_stat/UID目录下，tcp_snd和tcp_rcv就是TPC发送和接收流量
+
+流量优化经验总结：
+1.增量拉取数据
+2.界面展示的数据非WIFI下不预取
+3.实时的信息上报后台运行时改成非实时上报
+4.非WIFI场景降低耗流量的功能的网络通信频率
+5.合并网络请求，减少请求次数
+6.尽量利用WIFI传输信息
+
+第六章：安装包瘦身
+使用UCDetector扫描无用代码，反射、在XML中配置注入方式、第三方工程的引用、jar包调用等代码的引用方法无法扫描到。
+
+检查重复代码工具simian
+
+使用AndroidSDK\tools下的Lint扫描Unused Resources
+
+图片压缩：用pnggauntlet对非点9图片压缩，用crunch对点9图片压缩。
+
+小尺寸、色彩数少、有alpha通道透明度的时候，使用PNG；大尺寸、色彩渐变色多的用JPG。JPG的图片，让设计师出图时直接出JPG格式的图片
